@@ -2,6 +2,28 @@
 <title>&lt;editable-title&gt;</title>
 <script type="module" src="../../index.js"></script>
 
-<editable-title>
-  <h1>Title</h1>
-</editable-title>
+<main>
+  <editable-title>
+    <h1>Title</h1>
+  </editable-title>
+
+  <ul class="titles"></ul>
+</main>
+
+<style>
+  main {
+    width: 900px;
+    margin: auto;
+  }
+</style>
+
+<script type="module">
+  let et = document.querySelector('editable-title');
+  let titles = document.querySelector('.titles');
+
+  et.addEventListener('change', ev => {
+    let li = document.createElement('li');
+    li.textContent = ev.detail;
+    titles.appendChild(li);
+  });
+</script>

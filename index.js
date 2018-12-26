@@ -54,8 +54,12 @@ function editModeView() {
 
     // Event listeners
     function onSave() {
-      setTitle(inputNode.value);
-      dispatchSave();
+      let newValue = inputNode.value;
+      if(title !== newValue) {
+        setTitle(inputNode.value);
+        dispatchSave();
+      }
+
       dispatchClose();
     }
 
@@ -89,6 +93,10 @@ const template = document.createElement('template');
 template.innerHTML = `
   <div>
     <style>
+      :host {
+        display: block;
+      }
+
       .edit {
         display: none;
       }
@@ -100,10 +108,18 @@ template.innerHTML = `
       .title.closed {
         display: none;
       }
+
+      .title {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
     </style>
     <div class="title">
       <slot></slot>
-      <button class="edit-button">Edit</button>
+      <div>
+        <button class="edit-button">Edit</button>
+      </div>
     </div>
   </div>
 `;
@@ -174,6 +190,11 @@ function init(root) {
 
   function onSave(ev) {
     setTitle(ev.detail);
+    let reEv = new CustomEvent('change', {
+      bubbles: true,
+      detail: ev.detail
+    });
+    root.dispatchEvent(reEv);
   }
 
   // Initialization
