@@ -4,8 +4,8 @@ function editModeView() {
   template.innerHTML = `
     <div class="edit">
       <input type="text">
-      <button class="save">Save</button>
-      <button class="cancel">Cancel</button>
+      <button type="button" class="save">Save</button>
+      <button type="button" class="cancel">Cancel</button>
     <div>
   `;
 
@@ -26,6 +26,10 @@ function editModeView() {
     // DOM update functions
     function setInputNode(value) {
       inputNode.value = value;
+    }
+
+    function setInputNodeFocus() {
+      inputNode.focus();
     }
 
     // State update functions
@@ -53,7 +57,7 @@ function editModeView() {
     }
 
     // Event listeners
-    function onSave() {
+    function handleSave() {
       let newValue = inputNode.value;
       if(title !== newValue) {
         setTitle(inputNode.value);
@@ -61,6 +65,16 @@ function editModeView() {
       }
 
       dispatchClose();
+    }
+
+    function onSave() {
+      handleSave();
+    }
+
+    function onKeyUp(ev) {
+      if(ev.keyCode === 13) {
+        handleSave();
+      }
     }
 
     function onCancel() {
@@ -71,15 +85,21 @@ function editModeView() {
     // Initialization
     saveNode.addEventListener('click', onSave);
     cancelNode.addEventListener('click', onCancel);
+    inputNode.addEventListener('keyup', onKeyUp);
 
     function disconnect() {
-
+      saveNode.removeEventListener('click', onSave);
+      cancelNode.removeEventListener('click', onCancel);
+      inputNode.removeEventListener('keyup', onKeyUp);
     }
 
     function update(data = {}) {
       if(data.title != null) setTitle(data.title);
+      if(data.focus) setInputNodeFocus();
       return frag;
     }
+
+    update.disconnect = disconnect;
 
     return update;
   }
@@ -118,7 +138,7 @@ template.innerHTML = `
     <div class="title">
       <slot></slot>
       <div>
-        <button class="edit-button">Edit</button>
+        <button type="button" class="edit-button">Edit</button>
       </div>
     </div>
   </div>
@@ -148,14 +168,17 @@ function init(root) {
       updateEditMode = editMode();
       editNode = updateEditMode({ title });
       titleNode.parentNode.appendChild(editNode);
+    } else {
+      updateEditMode({ title });
     }
-    updateEditMode({ title });
+
     if(value) {
       editNode.classList.remove('open');
       titleNode.classList.remove('closed');
     } else {
       editNode.classList.add('open');
       titleNode.classList.add('closed');
+      updateEditMode({ focus: true });
     }
   }
 
