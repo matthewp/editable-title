@@ -6,7 +6,7 @@ function editModeView() {
       <input type="text">
       <button type="button" class="save">Save</button>
       <button type="button" class="cancel">Cancel</button>
-    <div>
+    </div>
   `;
 
   function clone() {
@@ -122,7 +122,15 @@ template.innerHTML = `
       }
 
       .edit.open {
-        display: block;
+        display: flex;
+      }
+
+      .edit > * {
+        margin-right: 5px;
+      }
+
+      .edit button:last-of-type {
+        margin-right: 0;
       }
 
       .title.closed {
@@ -133,6 +141,23 @@ template.innerHTML = `
         display: flex;
         align-items: center;
         justify-content: space-between;
+      }
+
+      button {
+        font-size: var(--button-font-size);
+        background-color: var(--button-background-color);
+        border: var(--button-border);
+      }
+
+      input {
+        height: var(--input-height);
+        width: var(--input-width);
+        font-size: var(--input-font-size);
+        flex: 1;
+      }
+
+      input:focus {
+        outline: var(--input-outline, -webkit-focus-ring-color auto 5px);
       }
     </style>
     <div class="title">
