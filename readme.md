@@ -37,6 +37,18 @@ let editableTitle = document.querySelector('editable-title');
 editableTitle.open = false;
 ```
 
+### change event
+
+Any time the title changes, a `change` event is fired. The `event.detail` contains a string of the new title.
+
+```js
+let editableTitle = document.querySelector('editable-title');
+
+editableTitle.addEventListener('change', ev => {
+  console.log('New title is', ev.detail);
+});
+```
+
 ## Styling
 
 These variables are available:
