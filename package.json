@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "testee --browsers firefox test/index.html"
   },
   "repository": {
     "type": "git",
@@ -12,9 +12,12 @@
   },
   "keywords": [],
   "author": "",
-  "license": "ISC",
+  "license": "BSD-2-Clause",
   "bugs": {
     "url": "https://github.com/matthewp/editable-title/issues"
   },
-  "homepage": "https://github.com/matthewp/editable-title#readme"
+  "homepage": "https://github.com/matthewp/editable-title#readme",
+  "devDependencies": {
+    "testee": "^0.8.1"
+  }
 }

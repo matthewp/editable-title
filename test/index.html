@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+<title>&lt;editable-title&gt; tests</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/mocha/5.2.0/mocha.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mocha/5.2.0/mocha.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/chai/4.2.0/chai.js"></script>
+<div id="host"></div>
+<div id="mocha"></div>
+<template id="openTmpl">
+  <editable-title open></editable-title>
+</template>
+
+<script type="module" src="../index.js"></script>
+<script type="module">
+  const assert = chai.assert;
+  mocha.setup('bdd');
+
+  function clone(template) {
+    return document.importNode(template.content, true);
+  }
+
+  describe('[open]', () => {
+    let root, editableTitle;
+
+    before(() => {
+      host.appendChild(clone(openTmpl));
+      editableTitle = host.firstElementChild;
+      root = editableTitle.shadowRoot;
+    });
+
+    after(() => {
+      host.innerHTML = '';
+    })
+
+    it('Is initially open', () => {
+      let saveBtn = root.querySelector('.save');
+      assert.ok(saveBtn, 'Save button shown');
+    });
+
+    describe('Removing the attribute', () => {
+      before(() => {
+        editableTitle.removeAttribute('open');
+      });
+
+      after(() => {
+        editableTitle.setAttribute('open', '');
+      });
+
+      it('Shows the title instead', () => {
+        let titleNode = root.querySelector('.title');
+        assert.equal(titleNode.classList.contains('closed'), false,
+          'not closed');
+      });
+    })
+  });
+
+  if(window.Testee) {
+    window.Testee.init();
+  }
+
+  mocha.run();
+</script>

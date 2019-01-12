@@ -1,7 +1,7 @@
 
 function editModeView() {
   const template = document.createElement('template');
-  template.innerHTML = `
+  template.innerHTML = /* html */ `
     <div class="edit">
       <input type="text">
       <button type="button" class="save">Save</button>
@@ -110,7 +110,7 @@ function editModeView() {
 const editMode = editModeView();
 
 const template = document.createElement('template');
-template.innerHTML = `
+template.innerHTML = /* html */ `
   <div>
     <style>
       :host {
@@ -264,21 +264,55 @@ function init(root) {
   return update;
 }
 
-const VIEW = Symbol('view');
+const view = Symbol('view');
 
-customElements.define('editable-title', class EditableTitle extends HTMLElement {
+class EditableTitle extends HTMLElement {
+  static get observedAttributes() {
+    return ['open'];
+  }
+
   constructor() {
     super();
     this.attachShadow({ mode: 'open' });
   }
 
   connectedCallback() {
-    this[VIEW] = init(this);
-    let frag = this[VIEW](this.open);
+    this[view] = init(this);
+    let frag = this[view]({
+      open: this.open
+    });
     this.shadowRoot.appendChild(frag);
   }
 
   disconnectedCallback() {
-    this[VIEW].disconnect();
+    this[view].disconnect();
   }
-});
+
+  attributeChangedCallback(name, _, value) {
+    this[name] = value;
+  }
+
+  set open(value) {
+    let open = typeof value === 'string' ? true : Boolean(value);
+    if(open) {
+      if(!this.hasAttribute('open')) {
+        this.setAttribute('open', '');
+      }
+    } else {
+      if(this.hasAttribute('open')) {
+        this.removeAttribute('open');
+      }
+    }
+
+    let update = this[view];
+    if(update) {
+      update({ open: this.open });
+    }
+  }
+
+  get open() {
+    return this.hasAttribute('open');
+  }
+}
+
+customElements.define('editable-title', EditableTitle);
