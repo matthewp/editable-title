@@ -245,13 +245,20 @@ function init(root) {
     root.dispatchEvent(reEv);
   }
 
-  // Initialization
-  editBtnNode.addEventListener('click', onEditClick);
-  frag.addEventListener('close', onClose);
-  frag.addEventListener('save', onSave);
+  function connect() {
+    editBtnNode.addEventListener('click', onEditClick);
+    frag.addEventListener('close', onClose);
+    frag.addEventListener('save', onSave);
+  }
 
   function disconnect() {
+    if(updateEditMode) {
+      updateEditMode.disconnect();
+    }
 
+    editBtnNode.removeEventListener('click', onEditClick);
+    frag.removeEventListener('close', onClose);
+    frag.removeEventListener('save', onSave);
   }
 
   function update(data = {}) {
@@ -259,12 +266,14 @@ function init(root) {
     return frag;
   }
 
+  update.connect = connect;
   update.disconnect = disconnect;
 
   return update;
 }
 
 const view = Symbol('view');
+const rendered = Symbol('rendered');
 
 class EditableTitle extends HTMLElement {
   static get observedAttributes() {
@@ -274,14 +283,21 @@ class EditableTitle extends HTMLElement {
   constructor() {
     super();
     this.attachShadow({ mode: 'open' });
+    this[rendered] = false;
   }
 
   connectedCallback() {
-    this[view] = init(this);
-    let frag = this[view]({
-      open: this.open
-    });
-    this.shadowRoot.appendChild(frag);
+    if(!this[rendered]) {
+      this[rendered] = true;
+      this[view] = init(this);
+      let frag = this[view]({
+        open: this.open
+      });
+  
+      this.shadowRoot.appendChild(frag);
+    }
+
+    this[view].connect();
   }
 
   disconnectedCallback() {
